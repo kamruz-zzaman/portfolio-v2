@@ -1,5 +1,3 @@
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import Hero from "@/components/sections/hero";
 import About from "@/components/sections/about";
 import Skills from "@/components/sections/skills";
@@ -11,14 +9,12 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
-        <Header />
         <Hero />
         <About />
         <Skills />
         <Projects />
         <FeaturedPosts />
         <Contact />
-        <Footer />
       </main>
     </div>
   );
