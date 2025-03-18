@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
@@ -24,7 +24,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Hi, I'm Kamruz
+                Hi, I'm Kamruz Zaman
               </motion.h1>
               <motion.p
                 className="text-primary text-xl md:text-2xl"
@@ -40,8 +40,9 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                I build modern web applications with cutting-edge technologies. Passionate about creating user-friendly
-                interfaces and robust backend systems.
+                I build modern web applications with cutting-edge technologies.
+                Passionate about creating user-friendly interfaces and robust
+                backend systems.
               </motion.p>
             </div>
             <motion.div
@@ -66,19 +67,27 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              <Link href="https://github.com/kamruz" target="_blank" rel="noopener noreferrer">
+              <Link
+                href="https://github.com/kamruz-zzaman"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button variant="ghost" size="icon">
                   <Github className="h-5 w-5" />
                   <span className="sr-only">GitHub</span>
                 </Button>
               </Link>
-              <Link href="https://linkedin.com/in/kamruz" target="_blank" rel="noopener noreferrer">
+              <Link
+                href="https://www.linkedin.com/in/kamruz-zaman/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button variant="ghost" size="icon">
                   <Linkedin className="h-5 w-5" />
                   <span className="sr-only">LinkedIn</span>
                 </Button>
               </Link>
-              <Link href="mailto:contact@kamruz.com">
+              <Link href="mailto:kamruz.zaman8991@gmail.com">
                 <Button variant="ghost" size="icon">
                   <Mail className="h-5 w-5" />
                   <span className="sr-only">Email</span>
@@ -94,7 +103,7 @@ export default function Hero() {
           >
             <div className="relative aspect-square overflow-hidden rounded-full border border-primary/10 bg-primary/5 p-2">
               <Image
-                src="/placeholder.svg?height=600&width=600"
+                src="/kamruz.jpg"
                 alt="Kamruz"
                 width={600}
                 height={600}
@@ -105,6 +114,5 @@ export default function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-

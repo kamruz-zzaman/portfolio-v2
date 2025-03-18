@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Github, Linkedin, Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Github, Linkedin, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Footer() {
   return (
@@ -10,19 +10,27 @@ export default function Footer() {
           © {new Date().getFullYear()} Kamruz. All rights reserved.
         </p>
         <div className="flex gap-4">
-          <Link href="https://github.com/kamruz" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://github.com/kamruz-zzaman"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button variant="ghost" size="icon">
               <Github className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
             </Button>
           </Link>
-          <Link href="https://linkedin.com/in/kamruz" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://www.linkedin.com/in/kamruz-zaman/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button variant="ghost" size="icon">
               <Linkedin className="h-5 w-5" />
               <span className="sr-only">LinkedIn</span>
             </Button>
           </Link>
-          <Link href="mailto:contact@kamruz.com">
+          <Link href="mailto:kamruz.zaman8991@gmail.com">
             <Button variant="ghost" size="icon">
               <Mail className="h-5 w-5" />
               <span className="sr-only">Email</span>
@@ -31,6 +39,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
-
