@@ -105,8 +105,8 @@ export default function Hero() {
               <Image
                 src="/kamruz.jpg"
                 alt="Kamruz"
-                width={600}
-                height={600}
+                width={500}
+                height={500}
                 className="rounded-full object-cover"
               />
             </div>
