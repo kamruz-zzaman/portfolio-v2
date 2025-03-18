@@ -4,6 +4,26 @@ import { compare } from "bcryptjs"
 import connectToDatabase from "@/lib/db"
 import User from "@/models/user"
 
+// Generate a fallback secret if NEXTAUTH_SECRET is not provided
+const generateFallbackSecret = () => {
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let result = ""
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
+// Make sure the secret has a fallback
+const secret = process.env.NEXTAUTH_SECRET || generateFallbackSecret()
+
+// Get the deployment URL or use a fallback
+const deploymentUrl = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+
+if (!deploymentUrl && process.env.NODE_ENV === "production") {
+  console.warn("Warning: NEXTAUTH_URL is not set in production environment")
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -18,26 +38,36 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password required")
         }
 
-        await connectToDatabase()
-
-        const user = await User.findOne({ email: credentials.email })
-
-        if (!user) {
-          throw new Error("Email does not exist")
+        // Handle missing MongoDB connection
+        const db = await connectToDatabase()
+        if (!db) {
+          console.error("Database connection failed")
+          return null
         }
 
-        const isPasswordValid = await compare(credentials.password, user.password)
+        try {
+          const user = await User.findOne({ email: credentials.email })
 
-        if (!isPasswordValid) {
-          throw new Error("Invalid password")
-        }
+          if (!user) {
+            throw new Error("Email does not exist")
+          }
 
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
+          const isPasswordValid = await compare(credentials.password, user.password)
+
+          if (!isPasswordValid) {
+            throw new Error("Invalid password")
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          }
+        } catch (error) {
+          console.error("Auth error:", error)
+          return null
         }
       },
     }),
@@ -66,9 +96,11 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: secret,
+  debug: process.env.NODE_ENV === "development",
 }
 
 const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
+
