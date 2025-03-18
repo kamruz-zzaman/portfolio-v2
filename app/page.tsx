@@ -1,8 +1,3 @@
-import Link from "next/link"
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-
 import Hero from "@/components/sections/hero"
 import About from "@/components/sections/about"
 import Skills from "@/components/sections/skills"
