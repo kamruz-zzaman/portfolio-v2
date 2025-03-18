@@ -12,6 +12,9 @@ export const metadata = {
   description:
     "Portfolio website of Kamruz, a Full Stack Developer specializing in modern web applications.",
   generator: "v0.dev",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
