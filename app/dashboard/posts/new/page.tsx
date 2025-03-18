@@ -7,27 +7,13 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUpload } from "@/components/dashboard/image-upload"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { ArrowLeft, Save } from "lucide-react"
 import Link from "next/link"
-
-const categories = [
-  "Web Development",
-  "TypeScript",
-  "React",
-  "Next.js",
-  "CSS",
-  "Backend",
-  "Performance",
-  "DevOps",
-  "Career",
-  "Other",
-]
+import { RichTextEditor } from "@/components/editor/rich-text-editor"
 
 export default function NewPostPage() {
   const router = useRouter()
@@ -60,8 +46,8 @@ export default function NewPostPage() {
     }
   }
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
+  const handleContentChange = (content: string) => {
+    setFormData((prev) => ({ ...prev, content }))
   }
 
   const handleSwitchChange = (name: string, checked: boolean) => {
@@ -108,7 +94,7 @@ export default function NewPostPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
@@ -157,7 +143,7 @@ export default function NewPostPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="excerpt">Excerpt</Label>
-                <Textarea
+                <Input
                   id="excerpt"
                   name="excerpt"
                   value={formData.excerpt}
@@ -169,18 +155,14 @@ export default function NewPostPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select value={formData.category} onValueChange={(value) => handleSelectChange("category", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  placeholder="Enter category (e.g., Web Development)"
+                  required
+                />
               </div>
 
               <div className="space-y-2">
@@ -213,15 +195,11 @@ export default function NewPostPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="content">Content (Markdown)</Label>
-                <Textarea
-                  id="content"
-                  name="content"
+                <Label htmlFor="content">Content</Label>
+                <RichTextEditor
                   value={formData.content}
-                  onChange={handleChange}
+                  onChange={handleContentChange}
                   placeholder="Write your post content here..."
-                  className="min-h-[300px]"
-                  required
                 />
               </div>
             </CardContent>
@@ -232,7 +210,7 @@ export default function NewPostPage() {
               <CardTitle>Featured Image</CardTitle>
             </CardHeader>
             <CardContent>
-              <ImageUpload onUpload={handleImageUpload} />
+              <ImageUpload onUpload={handleImageUpload} defaultImage={formData.image} />
             </CardContent>
             <CardFooter className="text-sm text-muted-foreground">
               This image will be displayed at the top of your post and in post previews.

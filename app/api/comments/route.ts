@@ -9,16 +9,28 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
     const postId = searchParams.get("postId")
-
-    if (!postId) {
-      return NextResponse.json({ error: "Post ID is required" }, { status: 400 })
-    }
+    const admin = searchParams.get("admin") === "true"
 
     await connectToDatabase()
 
-    const comments = await Comment.find({ post: postId, parent: null })
-      .sort({ createdAt: -1 })
-      .populate("author", "name image")
+    let query = {}
+
+    if (postId) {
+      query = { post: postId, parent: null }
+    }
+
+    let comments
+
+    if (admin) {
+      // For admin dashboard, get all comments with post and author info
+      comments = await Comment.find(query)
+        .sort({ createdAt: -1 })
+        .populate("author", "name image")
+        .populate("post", "title slug")
+    } else {
+      // For frontend, get comments for a specific post
+      comments = await Comment.find(query).sort({ createdAt: -1 }).populate("author", "name image")
+    }
 
     // Get user interactions if logged in
     const session = await getServerSession(authOptions)

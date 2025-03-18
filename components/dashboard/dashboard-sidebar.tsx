@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, FileText, FolderKanban, MessageSquare, Users, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, FileText, FolderKanban, MessageSquare, Users, LogOut } from "lucide-react"
 import { signOut } from "next-auth/react"
 
 const sidebarItems = [
@@ -32,11 +32,6 @@ const sidebarItems = [
     title: "Users",
     href: "/dashboard/users",
     icon: <Users className="h-5 w-5" />,
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: <Settings className="h-5 w-5" />,
   },
 ]
 
