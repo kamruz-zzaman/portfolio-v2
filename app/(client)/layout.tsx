@@ -23,5 +23,3 @@ export default function RootLayout({
     </div>
   );
 }
-
-import "./globals.css";
