@@ -7,6 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { NavigationLoader } from "@/components/navigation-loader";
 import { autoSeedDatabase } from "@/lib/auto-seed";
 import { Suspense } from "react";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 // Run database seeding in development mode
 // if (process.env.NODE_ENV === "development") {
@@ -38,7 +40,9 @@ export default function RootLayout({
           >
             <AuthProvider>
               <NavigationLoader />
+              <Header />
               <div className="flex min-h-screen flex-col">{children}</div>
+              <Footer />
               <Toaster />
             </AuthProvider>
           </ThemeProvider>
