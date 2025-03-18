@@ -1,8 +1,8 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
-import connectToDatabase from "@/lib/db";
-import User from "@/models/user";
+import NextAuth, { type NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
+import connectToDatabase from "@/lib/db"
+import User from "@/models/user"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,24 +15,21 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password required");
+          throw new Error("Email and password required")
         }
 
-        await connectToDatabase();
+        await connectToDatabase()
 
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({ email: credentials.email })
 
         if (!user) {
-          throw new Error("Email does not exist");
+          throw new Error("Email does not exist")
         }
 
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        );
+        const isPasswordValid = await compare(credentials.password, user.password)
 
         if (!isPasswordValid) {
-          throw new Error("Invalid password");
+          throw new Error("Invalid password")
         }
 
         return {
@@ -41,24 +38,24 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           image: user.image,
           role: user.role,
-        };
+        }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+        token.id = user.id
+        token.role = user.role
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.id = token.id as string
+        session.user.role = token.role as string
       }
-      return session;
+      return session
     },
   },
   pages: {
@@ -70,8 +67,9 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
+}
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
+

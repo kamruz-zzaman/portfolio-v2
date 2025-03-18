@@ -2,40 +2,22 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { X, Loader2, ImageIcon } from "lucide-react"
+import { Upload, X, Loader2 } from "lucide-react"
 import Image from "next/image"
-import { Progress } from "@/components/ui/progress"
 
 interface ImageUploadProps {
   onUpload: (url: string) => void
   defaultImage?: string
-  className?: string
 }
 
-export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadProps) {
+export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
   const [image, setImage] = useState<string | null>(defaultImage || null)
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const simulateProgress = () => {
-    setUploadProgress(0)
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 95) {
-          clearInterval(interval)
-          return prev
-        }
-        return prev + 5
-      })
-    }, 100)
-    return interval
-  }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -56,7 +38,6 @@ export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadPr
 
     setIsUploading(true)
     setError(null)
-    const progressInterval = simulateProgress()
 
     try {
       const formData = new FormData()
@@ -74,56 +55,21 @@ export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadPr
       const data = await response.json()
       setImage(data.url)
       onUpload(data.url)
-      setUploadProgress(100)
     } catch (error) {
       setError("Failed to upload image")
       console.error(error)
     } finally {
-      clearInterval(progressInterval)
-      setTimeout(() => {
-        setIsUploading(false)
-        setUploadProgress(0)
-      }, 500)
+      setIsUploading(false)
     }
   }
 
   const handleRemove = () => {
     setImage(null)
     onUpload("")
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
-  }
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0]
-
-      // Create a new event with the file
-      const event = {
-        target: {
-          files: e.dataTransfer.files,
-        },
-      } as unknown as React.ChangeEvent<HTMLInputElement>
-
-      handleUpload(event)
-    }
-  }
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click()
   }
 
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className="space-y-2">
       <Label>Image</Label>
 
       {image ? (
@@ -134,33 +80,17 @@ export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadPr
           </Button>
         </div>
       ) : (
-        <div
-          className="flex w-full max-w-md flex-col items-center justify-center rounded-md border border-dashed p-6"
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onClick={triggerFileInput}
-        >
+        <div className="flex w-full max-w-md flex-col items-center justify-center rounded-md border border-dashed p-6">
           <div className="flex flex-col items-center justify-center gap-2">
-            {isUploading ? (
-              <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
-            ) : (
-              <ImageIcon className="h-8 w-8 text-muted-foreground" />
-            )}
+            <Upload className="h-8 w-8 text-muted-foreground" />
             <p className="text-sm font-medium">Drag and drop or click to upload</p>
             <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (max 5MB)</p>
           </div>
-          <Input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleUpload}
-            disabled={isUploading}
-          />
+          <Input type="file" accept="image/*" className="mt-4 w-full" onChange={handleUpload} disabled={isUploading} />
           {isUploading && (
-            <div className="mt-4 w-full max-w-xs">
-              <Progress value={uploadProgress} className="h-2 w-full" />
-              <p className="mt-1 text-xs text-center">{uploadProgress}%</p>
+            <div className="mt-2 flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <p className="text-xs">Uploading...</p>
             </div>
           )}
           {error && <p className="mt-2 text-xs text-destructive">{error}</p>}

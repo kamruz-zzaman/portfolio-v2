@@ -3,14 +3,13 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { writeFile } from "fs/promises"
 import { join } from "path"
-import { mkdir } from "fs/promises"
 import { v4 as uuidv4 } from "uuid"
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -27,16 +26,7 @@ export async function POST(req: Request) {
     // Create unique filename
     const fileExt = file.name.split(".").pop()
     const fileName = `${uuidv4()}.${fileExt}`
-
-    // Ensure uploads directory exists
-    const uploadsDir = join(process.cwd(), "public", "uploads")
-    try {
-      await mkdir(uploadsDir, { recursive: true })
-    } catch (error) {
-      console.log("Directory already exists or cannot be created")
-    }
-
-    const filePath = join(uploadsDir, fileName)
+    const filePath = join(process.cwd(), "public", "uploads", fileName)
 
     // Save file
     await writeFile(filePath, buffer)

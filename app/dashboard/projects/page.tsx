@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -8,127 +8,55 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { PlusCircle, Search, Edit, Trash, MoreHorizontal, Eye, Star, StarOff, Loader2 } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { format } from "date-fns"
+import { PlusCircle, Search, Edit, Trash, MoreHorizontal, Eye, Star, StarOff } from "lucide-react"
 
-interface Project {
-  _id: string
-  title: string
-  slug: string
-  tags: string[]
-  featured: boolean
-  createdAt: string
-}
+// Mock data - would be fetched from API in real app
+const projects = [
+  {
+    id: "1",
+    title: "E-Commerce Platform",
+    slug: "ecommerce-platform",
+    tags: ["React", "Node.js", "MongoDB"],
+    featured: true,
+    date: "2023-10-15",
+  },
+  {
+    id: "2",
+    title: "Task Management App",
+    slug: "task-management",
+    tags: ["Next.js", "TypeScript", "Firebase"],
+    featured: true,
+    date: "2023-09-22",
+  },
+  {
+    id: "3",
+    title: "AI Content Generator",
+    slug: "ai-content-generator",
+    tags: ["React", "OpenAI API", "Express"],
+    featured: false,
+    date: "2023-08-30",
+  },
+  {
+    id: "4",
+    title: "Social Media Dashboard",
+    slug: "social-media-dashboard",
+    tags: ["Vue.js", "Node.js", "PostgreSQL"],
+    featured: false,
+    date: "2023-07-15",
+  },
+  {
+    id: "5",
+    title: "Weather App",
+    slug: "weather-app",
+    tags: ["React Native", "Weather API"],
+    featured: false,
+    date: "2023-06-28",
+  },
+]
 
 export default function ProjectsPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
-  const [projects, setProjects] = useState<Project[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null)
-  const [actionLoading, setActionLoading] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchProjects()
-  }, [])
-
-  const fetchProjects = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch("/api/projects?admin=true")
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch projects")
-      }
-
-      const data = await response.json()
-      setProjects(data.projects || [])
-    } catch (error) {
-      console.error("Error fetching projects:", error)
-      toast({
-        title: "Error",
-        description: "Failed to load projects",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleDeleteProject = async (id: string) => {
-    try {
-      setActionLoading(`delete-${id}`)
-      const response = await fetch(`/api/projects/${id}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete project")
-      }
-
-      setProjects((prev) => prev.filter((project) => project._id !== id))
-      toast({
-        title: "Project deleted",
-        description: "The project has been deleted successfully",
-      })
-    } catch (error) {
-      console.error("Error deleting project:", error)
-      toast({
-        title: "Error",
-        description: "Failed to delete project",
-        variant: "destructive",
-      })
-    } finally {
-      setActionLoading(null)
-      setDeleteProjectId(null)
-    }
-  }
-
-  const handleToggleFeatured = async (id: string, currentStatus: boolean) => {
-    try {
-      setActionLoading(`feature-${id}`)
-      const response = await fetch(`/api/projects/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ featured: !currentStatus }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${currentStatus ? "unfeature" : "feature"} project`)
-      }
-
-      setProjects((prev) =>
-        prev.map((project) => (project._id === id ? { ...project, featured: !currentStatus } : project)),
-      )
-      toast({
-        title: currentStatus ? "Project unfeatured" : "Project featured",
-        description: `The project has been ${currentStatus ? "removed from" : "added to"} featured projects`,
-      })
-    } catch (error) {
-      console.error("Error toggling featured status:", error)
-      toast({
-        title: "Error",
-        description: `Failed to ${currentStatus ? "unfeature" : "feature"} project`,
-        variant: "destructive",
-      })
-    } finally {
-      setActionLoading(null)
-    }
-  }
 
   const filteredProjects = projects.filter(
     (project) =>
@@ -137,7 +65,7 @@ export default function ProjectsPage() {
   )
 
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Projects</h2>
         <Button onClick={() => router.push("/dashboard/projects/new")}>
@@ -171,13 +99,7 @@ export default function ProjectsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                </TableCell>
-              </TableRow>
-            ) : filteredProjects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
                   No projects found.
@@ -185,7 +107,7 @@ export default function ProjectsPage() {
               </TableRow>
             ) : (
               filteredProjects.map((project) => (
-                <TableRow key={project._id}>
+                <TableRow key={project.id}>
                   <TableCell className="font-medium">{project.title}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
@@ -203,7 +125,7 @@ export default function ProjectsPage() {
                       <StarOff className="h-4 w-4 text-muted-foreground" />
                     )}
                   </TableCell>
-                  <TableCell>{format(new Date(project.createdAt), "MMM d, yyyy")}</TableCell>
+                  <TableCell>{project.date}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -220,27 +142,25 @@ export default function ProjectsPage() {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/projects/edit/${project._id}`}>
+                          <Link href={`/dashboard/projects/edit/${project.id}`}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            if (actionLoading === `feature-${project._id}`) return
-                            handleToggleFeatured(project._id, project.featured)
-                          }}
-                        >
-                          {actionLoading === `feature-${project._id}` ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : project.featured ? (
-                            <StarOff className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem>
+                          {project.featured ? (
+                            <>
+                              <StarOff className="mr-2 h-4 w-4" />
+                              Remove from featured
+                            </>
                           ) : (
-                            <Star className="mr-2 h-4 w-4" />
+                            <>
+                              <Star className="mr-2 h-4 w-4" />
+                              Add to featured
+                            </>
                           )}
-                          {project.featured ? "Remove from featured" : "Add to featured"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => setDeleteProjectId(project._id)}>
+                        <DropdownMenuItem className="text-destructive">
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
@@ -253,33 +173,6 @@ export default function ProjectsPage() {
           </TableBody>
         </Table>
       </div>
-
-      <AlertDialog open={!!deleteProjectId} onOpenChange={(open) => !open && setDeleteProjectId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the project and all associated data.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteProjectId && handleDeleteProject(deleteProjectId)}
-              className="bg-destructive text-destructive-foreground"
-            >
-              {actionLoading === `delete-${deleteProjectId}` ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

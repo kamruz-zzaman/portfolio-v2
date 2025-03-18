@@ -19,7 +19,6 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Update the matcher to be more specific and avoid conflicts
 export const config = {
   matcher: ["/dashboard/:path*"],
 }

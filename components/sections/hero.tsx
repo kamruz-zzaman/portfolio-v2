@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import Link from "next/link"
+import Image from "next/image"
+import { ArrowRight, Github, Linkedin, Mail } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 export default function Hero() {
   return (
-    <section className="w-full py-12 md:py-22 bg-gradient-to-b from-background to-background/80">
+    <section className="w-full py-10 md:py-22 bg-gradient-to-b from-background to-background/80">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
           <motion.div
@@ -40,9 +40,8 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                I build modern web applications with cutting-edge technologies.
-                Passionate about creating user-friendly interfaces and robust
-                backend systems.
+                I build modern web applications with cutting-edge technologies. Passionate about creating user-friendly
+                interfaces and robust backend systems.
               </motion.p>
             </div>
             <motion.div
@@ -67,21 +66,13 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              <Link
-                href="https://github.com/kamruz"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href="https://github.com/kamruz" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon">
                   <Github className="h-5 w-5" />
                   <span className="sr-only">GitHub</span>
                 </Button>
               </Link>
-              <Link
-                href="https://linkedin.com/in/kamruz"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href="https://linkedin.com/in/kamruz" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon">
                   <Linkedin className="h-5 w-5" />
                   <span className="sr-only">LinkedIn</span>
@@ -114,5 +105,6 @@ export default function Hero() {
         </div>
       </div>
     </section>
-  );
+  )
 }
+

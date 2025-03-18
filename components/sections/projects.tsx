@@ -1,59 +1,52 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
-import { ArrowRight, Github, Loader2 } from "lucide-react"
+import { ArrowRight, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-interface Project {
-  _id: string
-  title: string
-  slug: string
-  description: string
-  image: string
-  tags: string[]
-  github: string
-  demo: string
-}
+const projects = [
+  {
+    id: "ecommerce-platform",
+    title: "E-Commerce Platform",
+    description: "A full-featured online shopping platform with payment integration",
+    image: "/placeholder.svg?height=300&width=500",
+    tags: ["React", "Node.js", "MongoDB", "Stripe"],
+    github: "https://github.com/kamruz/ecommerce-platform",
+    demo: "https://ecommerce-platform.example.com",
+    slug: "ecommerce-platform",
+  },
+  {
+    id: "task-management",
+    title: "Task Management App",
+    description: "A collaborative task management application with real-time updates",
+    image: "/placeholder.svg?height=300&width=500",
+    tags: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS"],
+    github: "https://github.com/kamruz/task-management",
+    demo: "https://task-management.example.com",
+    slug: "task-management",
+  },
+  {
+    id: "ai-content-generator",
+    title: "AI Content Generator",
+    description: "An AI-powered application that generates content based on user prompts",
+    image: "/placeholder.svg?height=300&width=500",
+    tags: ["React", "OpenAI API", "Express", "PostgreSQL"],
+    github: "https://github.com/kamruz/ai-content-generator",
+    demo: "https://ai-content-generator.example.com",
+    slug: "ai-content-generator",
+  },
+]
 
 export default function Projects() {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   })
-
-  const [projects, setProjects] = useState<Project[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const response = await fetch("/api/projects?featured=true")
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch projects")
-        }
-
-        const data = await response.json()
-        setProjects(data.projects || [])
-      } catch (err) {
-        console.error("Error fetching projects:", err)
-        setError("Failed to load projects. Please try again later.")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (inView) {
-      fetchProjects()
-    }
-  }, [inView])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -88,76 +81,55 @@ export default function Projects() {
             </p>
           </motion.div>
         </motion.div>
-
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-red-500">{error}</p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Try Again
-            </Button>
-          </div>
-        ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            className="mx-auto grid max-w-5xl gap-8 py-12 md:grid-cols-2 lg:grid-cols-3"
-          >
-            {projects.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground">No projects found.</p>
-              </div>
-            ) : (
-              projects.map((project, index) => (
-                <motion.div key={project._id} variants={itemVariants} transition={{ delay: index * 0.1 }}>
-                  <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-lg">
-                    <div className="overflow-hidden">
-                      <Image
-                        src={project.image || "/placeholder.svg?height=300&width=500"}
-                        alt={project.title}
-                        width={500}
-                        height={300}
-                        className="object-cover w-full h-48 transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-                    <CardHeader>
-                      <CardTitle>{project.title}</CardTitle>
-                      <CardDescription>{project.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags.map((tag) => (
-                          <Badge key={tag} variant="outline">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={project.github} target="_blank" rel="noopener noreferrer">
-                          <Github className="mr-2 h-4 w-4" />
-                          Code
-                        </Link>
-                      </Button>
-                      <Button size="sm" asChild>
-                        <Link href={`/projects/${project.slug}`}>
-                          Details
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))
-            )}
-          </motion.div>
-        )}
-
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          className="mx-auto grid max-w-5xl gap-8 py-12 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {projects.map((project, index) => (
+            <motion.div key={project.id} variants={itemVariants} transition={{ delay: index * 0.1 }}>
+              <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-lg">
+                <div className="overflow-hidden">
+                  <Image
+                    src={project.image || "/placeholder.svg"}
+                    alt={project.title}
+                    width={500}
+                    height={300}
+                    className="object-cover w-full h-48 transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle>{project.title}</CardTitle>
+                  <CardDescription>{project.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tags.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={project.github} target="_blank" rel="noopener noreferrer">
+                      <Github className="mr-2 h-4 w-4" />
+                      Code
+                    </Link>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <Link href={`/projects/${project.slug}`}>
+                      Details
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
         <motion.div
           variants={containerVariants}
           initial="hidden"

@@ -2,8 +2,10 @@
 
 import type React from "react"
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext } from "react"
 
+// This provider is no longer needed as we're using NextAuth
+// Keeping it as a stub to avoid breaking existing imports
 interface User {
   id: string
   name: string | null
@@ -17,39 +19,22 @@ interface AuthContextType {
   signOut: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>({
+  user: null,
+  signIn: async () => {},
+  signOut: async () => {},
+})
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Check if user is stored in localStorage
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-    setLoading(false)
-  }, [])
-
-  const signIn = async (user: User) => {
-    setUser(user)
-    localStorage.setItem("user", JSON.stringify(user))
-  }
-
-  const signOut = async () => {
-    setUser(null)
-    localStorage.removeItem("user")
-  }
-
-  return <AuthContext.Provider value={{ user, signIn, signOut }}>{!loading && children}</AuthContext.Provider>
+  return <>{children}</>
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+  // Return a stub that won't break existing code
+  return {
+    user: null,
+    signIn: async () => {},
+    signOut: async () => {},
   }
-  return context
 }
 

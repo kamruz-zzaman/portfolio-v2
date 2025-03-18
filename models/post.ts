@@ -11,9 +11,6 @@ export interface IPost extends mongoose.Document {
   readTime: string
   published: boolean
   likes: number
-  dislikes: number
-  shares: number
-  views: number
   createdAt: Date
   updatedAt: Date
 }
@@ -30,9 +27,6 @@ const PostSchema = new mongoose.Schema<IPost>(
     readTime: { type: String, required: true },
     published: { type: Boolean, default: false },
     likes: { type: Number, default: 0 },
-    dislikes: { type: Number, default: 0 },
-    shares: { type: Number, default: 0 },
-    views: { type: Number, default: 0 },
   },
   { timestamps: true },
 )
