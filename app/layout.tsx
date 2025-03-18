@@ -11,7 +11,6 @@ export const metadata = {
   title: "Kamruz - Full Stack Developer",
   description:
     "Portfolio website of Kamruz, a Full Stack Developer specializing in modern web applications.",
-  generator: "v0.dev",
 };
 
 export default function RootLayout({
